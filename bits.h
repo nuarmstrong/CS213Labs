@@ -1,0 +1,27 @@
+
+int minusOne();
+int test_minusOne();
+int isTmax(int);
+int test_isTmax(int);
+int distinctNegation(int);
+int test_distinctNegation(int);
+int isGreater(int, int);
+int test_isGreater(int, int);
+int bitOr(int, int);
+int test_bitOr(int, int);
+int bitMatch(int, int);
+int test_bitMatch(int, int);
+int anyOddBit();
+int test_anyOddBit();
+int getByte(int, int);
+int test_getByte(int, int);
+int conditional(int, int, int);
+int test_conditional(int, int, int);
+int isPallindrome(int);
+int test_isPallindrome(int);
+int floatIsEqual(unsigned, unsigned);
+int test_floatIsEqual(unsigned, unsigned);
+unsigned floatScale1d2(unsigned);
+unsigned test_floatScale1d2(unsigned);
+unsigned floatPower2(int);
+unsigned test_floatPower2(int);
