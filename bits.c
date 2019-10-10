@@ -151,7 +151,13 @@ int minusOne(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
-	return 2;
+	int i = x + 1;
+	int r = i + i;
+	int m = !i;
+	r = r ^ m;
+	r = !r;
+
+  return r;
 }
 /*
  * distinctNegation - returns 1 if x != -x.
@@ -172,7 +178,24 @@ int distinctNegation(int x) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-  return 2;  
+  int e =!! (x ^ y); //checks if x=y, 0 if identical
+
+        int xsign = (x >>31); //if x is negative this will be 1
+        int ysign = (y >>31); //likewise for y 
+
+        int xpyn = (!xsign) & ysign; //useful because if x is positive and y is negative, x>y
+        int xnyp = xsign & (!ysign); 
+        int samesign = !xpyn & !xnyp;
+
+        int n = ~y + 1;
+        int z = (x + n) >> 31; //if x-y is negative, z=1
+
+        int r = (!z) & samesign;      
+
+        r = r | xpyn;
+        r = r & e; //if r, and not identical
+
+        return r;  
 }
 /* 
  * bitOr - x|y using only ~ and & 
@@ -207,7 +230,18 @@ int bitMatch(int x, int y) {
  *   Rating: 2
  */
 int anyOddBit(int x) {
-    return 2;
+    int check = 1 << 1;
+	int r = 0;
+
+	check = check + (check << 2);
+	check = check + (check << 4);
+	check = check + (check << 8);
+	check = check + (check << 16);
+	
+	r = x & check;
+	r = !!r;	
+
+    	return r;
 }
 /* 
  * getByte - Extract byte n from word x
@@ -218,7 +252,16 @@ int anyOddBit(int x) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-  return 2;
+  int i = x;
+	int move = n << 3;
+
+	int block = ~0;
+	block = block << 8;
+	block = ~block;
+
+	i = i >> move;
+	i = i & block;
+	return i;
 }
 /* 
  * conditional - same as x ? y : z 
@@ -340,7 +383,53 @@ int floatIsEqual(unsigned uf, unsigned ug) {
  *   Rating: 4
  */
 unsigned floatScale1d2(unsigned uf) {
-  return 2;
+	unsigned block = ~0; //2139095040;
+
+	unsigned exp = 0; //get the exponent term
+		
+	unsigned frac = (uf <<9)>>9;//get the fraction term
+
+	unsigned sign = (uf >>31)<<31;	//get the sign term	
+
+	unsigned fracodd = (frac & 1) && ((frac >>1) & 1); //checks whether to round up
+
+	int r = 0;
+
+	int exptmp = 0;
+
+	block = block << 24;
+        block = block >> 1; 
+
+	exp = uf & block;
+	exptmp = exp;
+
+	if ((!(exp ^ block))){
+                return uf;
+        } //checks if NaN
+
+	if (!(frac || exp)){
+		return uf;
+	} //checks for 0
+
+        if (exp){
+                exp = exp >> 23;
+                exp = exp -1;
+                exp = exp << 23;
+        }//normal case, removes 1 from the exponent
+
+	if (!exp){
+		frac = (frac >>1) + fracodd;
+	}// if there is no exponent, then modify frac accordingly, if nonzero odd round up.
+
+	if (exptmp && (!(exptmp >>24))){
+		frac = frac + (1 <<22);
+	}// if exponent is 00000001, modify frac accordingly
+
+	
+
+	r = sign | exp | frac; //combines resulting sign, exponent, and fraction
+	
+	return r;
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -356,5 +445,18 @@ unsigned floatScale1d2(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    return 2;
-}
+        unsigned exp = x +127;
+	unsigned expsign = x>>31;
+	unsigned block = 2147483392;
+	
+	if ((block & exp) && !expsign){
+		return 2139095040;//checks whether x is too big
+	}
+
+	if ((block ^ x) && expsign){
+		return 0;//checks whether x is too small
+	}
+
+	exp = exp <<23;
+
+	return exp;}
