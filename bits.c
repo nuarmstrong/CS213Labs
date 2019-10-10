@@ -248,41 +248,37 @@ int conditional(int x, int y, int z) {
  *   Rating: 4
  */
 int isPallindrome(int x) {
-    int lower16, upper16, mask16;
-    int lower8, upper8, mask8;
-    int lower4, upper4, mask4;
-    int lower2, upper2, mask2;
-    int lower1, upper1, mask1;
-    
-    mask16 = (0xff << 8) | 0xff;
-    lower16 = x & mask16;
-    upper16 = (x>>16) & mask16;
-    
-    mask8 = 0xff;
-    lower8 = lower16 & mask8;
-    upper8 = (lower16 >> 8) & mask8;
-    lower16 = upper8 | lower8;
-    
-    mask4 = 0x0f | (0x0f << 8);
-    lower4 = (lower16 >> 4) & mask4;
-    upper4 = (lower16 & mask4) << 4;
-    lower16 = upper4 | lower4;
-    
-    mask2 = 0x33 | (0x33 << 8);
-    lower2 = (lower16 >> 2) & mask2;
-    upper2 = (lower16 & mask2) << 2;
-    lower16 = lower2 | upper2;
-    
-    mask1 = 0x55 | (0x55 << 8);
-    lower1 = (lower16 >> 1) & mask1;
-    upper1 = (lower16 & mask1) << 1;
-    lower16 = lower1 | upper1;
-    
-    int result;
-    result = lower16 ^ upper16;
-    result = !result;
-    
-    return result;
+   int upper16, lower16, upper8, lower8, upper4, lower4, upper2, lower2, upper1, lower1;
+   int mask16, mask8, mask4, mask2, mask1;
+   int result;
+  
+   mask16 = 0xff | (0xff << 8);
+   upper16 = (x >> 16) & mask16;
+   lower16 = x & mask16;
+
+   mask8 = 0xff;
+   upper8 = (lower16 >> 8) & mask8;
+   lower8 = (lower16 & mask8) << 8;
+   lower16 = lower8 | upper8;
+
+   mask4 = 0xf | (0xf << 8);
+   upper4 = (lower16 >> 4) & mask4;
+   lower4 = (lower16 & mask4) << 4;
+   lower16 = lower4 | upper4;
+
+   mask2 = 0x33 | (0x33 << 8);
+   upper2 = (lower16 >> 2) & mask2;
+   lower2 = (lower16 & mask2) << 2;
+   lower16 = lower2 | upper2;
+
+   mask1 = 0x55 | (0x55 << 8);
+   upper1 = (lower16 >> 1) & mask1;
+   lower1 = (lower16 & mask1) << 1;
+   lower16 = lower1 | upper1;
+
+   result = lower16 ^ upper16;
+   result = !result;
+ return result;
 }
 /* 
  * floatIsEqual - Compute f == g for floating point arguments f and g.
