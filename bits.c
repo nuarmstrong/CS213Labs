@@ -1,7 +1,7 @@
 /* 
  * CS:APP Data Lab 
  * 
- * <Please put your name and userid here>
+ * Dominic Hatch dmh7817, Ian Armstrong ima5655
  * 
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
@@ -141,7 +141,8 @@ NOTES:
  *   Rating: 1
  */
 int minusOne(void) {
-  return ~0;
+/*flips 0000... to 1111..., or -1 in 2s complement*/
+   return ~0;
 }
 /*
  * isTmax - returns 1 if x is the maximum, two's complement number,
@@ -151,6 +152,8 @@ int minusOne(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
+/* arithmetically shifts number to 0 giving false positive for -1
+ * so variable m is used to check that it is not -1*/
 	int i = x + 1;
 	int r = i + i;
 	int m = !i;
@@ -167,6 +170,7 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int distinctNegation(int x) {
+/*calculates the negative of x, then compares it to x*/ 
   x = x ^ (~x + 0x01);
   return !!x;
 }
@@ -205,6 +209,9 @@ int isGreater(int x, int y) {
  *   Rating: 1
  */
 int bitOr(int x, int y) {
+/*flips both inputs, compares using &. This returns bits that are not in
+ * either x or y. Flipping this gives bits not not in either which is 
+ * in one or the other*/
   return ~(~x & ~y);
 }
 /* 
@@ -216,9 +223,14 @@ int bitOr(int x, int y) {
  *   Rating: 1
  */
 int bitMatch(int x, int y) {
+/*use & to check for same 1s, flip both and us & again to check for same 0s. 
+ * Use | to combine these two sequences*/
   int ones = x & y;
-  int zeros = ~x & ~y;
-  return ones | zeros;
+  int bx = ~x;
+  int by = ~y;
+  int zeros = bx & by;
+  int r = ones | zeros;
+	return r;
 }
 /* 
  * anyOddBit - return 1 if any odd-numbered bit in word set to 1
@@ -230,6 +242,7 @@ int bitMatch(int x, int y) {
  *   Rating: 2
  */
 int anyOddBit(int x) {
+/*constructs thebit pattern where every odd position is filled, the checks it accross*/
     int check = 1 << 1;
 	int r = 0;
 
@@ -252,6 +265,7 @@ int anyOddBit(int x) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
+/*move the desired byte to rightmost position, then check whatever is in that position with block of 1s*/
   int i = x;
 	int move = n << 3;
 
@@ -271,6 +285,7 @@ int getByte(int x, int n) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
+/*if the condition is true, do nothing to y. If false, add the difference between x and y*/
   int diff = z + (~y + 0x1);
   int cond =!x;
   int r = 0;
@@ -291,6 +306,10 @@ int conditional(int x, int y, int z) {
  *   Rating: 4
  */
 int isPallindrome(int x) {
+/*splits 32 bit sequence into upper and lower 16bit halves. Use mask to extract upper and lower
+ *  8 bit sequence  and | to lower 16 bit sequence. Continue process of cutting sequence in half
+ *  (&ing with respective mask) and |ing with lower16. By end, lower16 contains reversed order of
+ *  upper16 bit sequence. Use !^ to see if they are the same. If yes it will return 1 otherwise 0. */
    int upper16, lower16, upper8, lower8, upper4, lower4, upper2, lower2, upper1, lower1;
    int mask16, mask8, mask4, mask2, mask1;
    int result;
@@ -335,6 +354,8 @@ int isPallindrome(int x) {
  *   Rating: 2
  */
 int floatIsEqual(unsigned uf, unsigned ug) {
+/*uses a block to extract exponent terms of the float. Checks whether the bits are the same.
+ * if both are0, make it equal. If either is NaN, return 0*/
     unsigned block = ~0;
     int expf = 0;
     int expg = 0;
@@ -383,6 +404,8 @@ int floatIsEqual(unsigned uf, unsigned ug) {
  *   Rating: 4
  */
 unsigned floatScale1d2(unsigned uf) {
+/*separates parts of the float, then checks special cases of 0s and NaNs. Then checks if exponent
+ * is 1. Then checks if there is no exponent. Finally checks normal case.*/
 	unsigned block = ~0; //2139095040;
 
 	unsigned exp = 0; //get the exponent term
@@ -445,6 +468,7 @@ unsigned floatScale1d2(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
+/* checks whether x is too large or too small, otherwise move it into the exponent spot.*/
         unsigned exp = x +127;
 	unsigned expsign = x>>31;
 	unsigned block = 2147483392;
